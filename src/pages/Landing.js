@@ -4,7 +4,7 @@ import Card, { CardBody } from "../components/Card";
 
 export default function Landing({ goLogin }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#E3F0FF]">
         <MarketingNav onLogin={() => goLogin("login")} />
       
 

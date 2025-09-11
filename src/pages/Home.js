@@ -5,7 +5,7 @@ export default function Home({ onNav }) {
   const balanceHours = 3.0;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 bg-[#E3F0FF] min-h-screen">
       
       {/* Greeting */}
       <Card>

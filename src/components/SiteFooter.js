@@ -1,6 +1,6 @@
 export default function SiteFooter() {
   return (
-    <footer className="border-t bg-white">
+    <footer className="border-t bg-[#FFDAB9]">
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
         {/* Brand + short blurb */}
         <div className="flex items-center gap-2">

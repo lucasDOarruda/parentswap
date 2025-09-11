@@ -1,7 +1,7 @@
 // src/components/MarketingNav.js
 export default function MarketingNav({ onLogin }) {
   return (
-    <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b">
+    <header className="sticky top-0 z-20 bg-[#FFDAB9] backdrop-blur border-b">
       <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2">
           <span className="text-2xl">👶</span>
