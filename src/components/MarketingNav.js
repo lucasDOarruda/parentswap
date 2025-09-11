@@ -1,32 +1,26 @@
 // src/components/MarketingNav.js
-export default function MarketingNav({ onNav }) {
-  const go = (tab) => onNav?.(tab);
-
-  const items = [
-    { id: "post", label: "Create", icon: "➕" },
-    { id: "wallet", label: "Wallet", icon: "🪙" },
-    { id: "messages", label: "Messages", icon: "💬" },
-    { id: "me", label: "Settings", icon: "⚙️" },
-  ];
-
+export default function MarketingNav({ onLogin }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t">
-      <div className="max-w-md mx-auto">
-        <ul className="grid grid-cols-4">
-          {items.map((it) => (
-            <li key={it.id} className="text-center">
-              <button
-                onClick={() => go(it.id)}
-                className="w-full py-2.5 flex flex-col items-center gap-1 text-slate-700 hover:bg-slate-50"
-                aria-label={it.label}
-              >
-                <span className="text-xl leading-none">{it.icon}</span>
-                <span className="text-[11px]">{it.label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+    <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b">
+      <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="#top" className="flex items-center gap-2">
+          <span className="text-2xl">👶</span>
+          <span className="font-semibold">ParentSwap</span>
+          <span className="ml-2 text-[10px] px-2 py-1 rounded-full bg-slate-100 text-slate-600">MVP</span>
+        </a>
+        <nav className="hidden sm:flex items-center gap-4 text-sm text-slate-600">
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          
+        </nav>
+        <button
+          onClick={onLogin}
+          className="w-8 h-8 flex items-center justify-center rounded-full border border-slate-200 text-xl text-slate-700 bg-white hover:bg-slate-100 transition"
+          aria-label="Log in"
+        >
+          👤
+        </button>
       </div>
-    </nav>
+    </header>
   );
 }

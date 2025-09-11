@@ -1,5 +1,5 @@
 import Card, { CardBody } from "../components/Card";
-import MarketingNav from "../components/MarketingNav";
+
 
 export default function Home({ onNav }) {
   const balanceHours = 3.0;
@@ -20,7 +20,7 @@ export default function Home({ onNav }) {
           </span>
         </CardBody>
       </Card>
- <MarketingNav onNav={onNav} />
+
       {/* Quick actions */}
       <div className="grid grid-cols-2 gap-3">
         <button
@@ -127,7 +127,7 @@ export default function Home({ onNav }) {
         </CardBody>
       </Card>
 
-      <div className="pb-24" />
+      <div className="pb-22" />
     </div>
   );
 }
