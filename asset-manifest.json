@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/parentswap/static/css/main.fd26c30a.css",
+    "main.js": "/parentswap/static/js/main.af811fd7.js",
+    "index.html": "/parentswap/index.html",
+    "main.fd26c30a.css.map": "/parentswap/static/css/main.fd26c30a.css.map",
+    "main.af811fd7.js.map": "/parentswap/static/js/main.af811fd7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fd26c30a.css",
+    "static/js/main.af811fd7.js"
+  ]
+}
