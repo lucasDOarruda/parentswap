@@ -1,23 +1,78 @@
+import { useEffect, useState } from "react";
+import { auth, db } from "../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { collection, onSnapshot, query, where, doc, getDoc } from "firebase/firestore";
 import Card, { CardBody } from "../components/Card";
 
-
 export default function Home({ onNav }) {
-  const balanceHours = 3.0;
+  const [requests, setRequests] = useState([]);
+  const [balanceHours, setBalanceHours] = useState(0);
+  const [user, setUser] = useState(null);
+
+  // 🔹 Track logged-in user
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser); // null if logged out
+    });
+    return unsubscribe;
+  }, []);
+
+  // 🔹 Load open babysitting requests
+  useEffect(() => {
+    const q = query(collection(db, "requests"), where("status", "==", "open"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setRequests(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return unsubscribe;
+  }, []);
+
+  // 🔹 Load wallet balance when user is ready
+  useEffect(() => {
+    const loadWallet = async () => {
+      if (!user) return;
+      const walletRef = doc(db, "wallet", user.uid);
+      const snap = await getDoc(walletRef);
+      if (snap.exists()) {
+        setBalanceHours(snap.data().hours || 0);
+      } else {
+        setBalanceHours(0); // default if no wallet doc
+      }
+    };
+    loadWallet();
+  }, [user]);
+
+  // 🔹 Handle logout
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
   return (
     <div className="space-y-5 bg-[#E3F0FF] min-h-screen">
-      
       {/* Greeting */}
       <Card>
-        <CardBody className="flex items-center gap-3">
-          <div className="text-4xl">👋</div>
-          <div className="flex-1">
-            <h1 className="text-lg font-semibold">Welcome back</h1>
-            <p className="text-slate-600 text-sm">Here’s your snapshot for today.</p>
+        <CardBody className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="text-4xl">👋</div>
+            <div>
+              <h1 className="text-lg font-semibold">
+                {user ? `Welcome back, ${user.email}` : "Welcome back"}
+              </h1>
+              <p className="text-slate-600 text-sm">
+                Here’s your snapshot for today.
+              </p>
+            </div>
           </div>
-          <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">
-            1 upcoming
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+              {requests.length} upcoming
+            </span>
+            <button
+              onClick={handleLogout}
+              className="rounded-lg bg-red-500 text-white text-sm px-3 py-1.5"
+            >
+              Logout
+            </button>
+          </div>
         </CardBody>
       </Card>
 
@@ -45,45 +100,37 @@ export default function Home({ onNav }) {
       <div className="space-y-3">
         <div className="font-semibold">Open in your network</div>
 
-        <Card>
-          <CardBody className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-100 grid place-items-center">👩🏽</div>
-            <div className="flex-1">
-              <div className="font-medium">Ana</div>
-              <div className="text-xs text-slate-500">Fri 7:00–9:00pm • Coogee</div>
-            </div>
-            <span className="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700">2h</span>
-          </CardBody>
-          <CardBody className="pt-0">
-            <p className="text-sm text-slate-700">Date night. Bedtime routine at 7pm.</p>
-            <button
-              onClick={() => onNav?.("requests")}
-              className="mt-2 w-full rounded-xl bg-indigo-600 text-white font-semibold py-2"
-            >
-              Accept &amp; Earn
-            </button>
-          </CardBody>
-        </Card>
+        {requests.length === 0 && (
+          <p className="text-sm text-slate-500">No open requests right now.</p>
+        )}
 
-        <Card>
-          <CardBody className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-100 grid place-items-center">🧔🏼</div>
-            <div className="flex-1">
-              <div className="font-medium">Ben</div>
-              <div className="text-xs text-slate-500">Sat 1:00–4:00pm • Bondi</div>
-            </div>
-            <span className="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700">3h</span>
-          </CardBody>
-          <CardBody className="pt-0">
-            <p className="text-sm text-slate-700">Snacks provided. Chill arvo sit.</p>
-            <button
-              onClick={() => onNav?.("requests")}
-              className="mt-2 w-full rounded-xl bg-indigo-600 text-white font-semibold py-2"
-            >
-              Accept &amp; Earn
-            </button>
-          </CardBody>
-        </Card>
+        {requests.map((req) => (
+          <Card key={req.id}>
+            <CardBody className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-slate-100 grid place-items-center">
+                {req.avatar || "👤"}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">{req.name}</div>
+                <div className="text-xs text-slate-500">
+                  {req.time} • {req.location}
+                </div>
+              </div>
+              <span className="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700">
+                {req.hours}h
+              </span>
+            </CardBody>
+            <CardBody className="pt-0">
+              <p className="text-sm text-slate-700">{req.details}</p>
+              <button
+                onClick={() => onNav?.("requests")}
+                className="mt-2 w-full rounded-xl bg-indigo-600 text-white font-semibold py-2"
+              >
+                Accept &amp; Earn
+              </button>
+            </CardBody>
+          </Card>
+        ))}
       </div>
 
       {/* Wallet */}
@@ -91,7 +138,9 @@ export default function Home({ onNav }) {
         <CardBody className="flex items-center justify-between">
           <div>
             <div className="text-sm text-slate-500">Wallet Balance</div>
-            <div className="text-2xl font-semibold">{balanceHours.toFixed(1)} h</div>
+            <div className="text-2xl font-semibold">
+              {balanceHours.toFixed(1)} h
+            </div>
           </div>
           <div className="text-right">
             <div className="text-xs text-slate-500">Estimated cash owed</div>

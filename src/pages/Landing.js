@@ -1,12 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import MarketingNav from "../components/MarketingNav";
 import SiteFooter from "../components/SiteFooter";
 import Card, { CardBody } from "../components/Card";
 
-export default function Landing({ goLogin }) {
+export default function Landing() {
+  const navigate = useNavigate();
+
+  const goLogin = () => {
+    navigate("/login"); // redirect to login page
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#E3F0FF]">
-        <MarketingNav onLogin={() => goLogin("login")} />
-      
+      <MarketingNav onLogin={goLogin} />
 
       <main className="flex-1 max-w-md mx-auto px-4 py-6 space-y-6">
         {/* Hero */}

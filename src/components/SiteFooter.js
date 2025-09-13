@@ -17,7 +17,7 @@ export default function SiteFooter() {
         <div className="grid grid-cols-1 gap-3 text-sm">
           <div>
             <div className="text-slate-500">Company</div>
-            <div className="mt-1">ParentSwap Pty Ltd</div>
+            <div className="mt-1">ParentSwap -  Yadata.com.au Pty Ltd.</div>
             <div className="text-slate-600">ABN 12 345 678 901</div>
             <div className="text-slate-600">Bondi, Sydney NSW, Australia</div>
           </div>
@@ -48,7 +48,7 @@ export default function SiteFooter() {
 
         {/* Copyright */}
         <div className="text-xs text-slate-500">
-          © {new Date().getFullYear()} ParentSwap Pty Ltd. All rights reserved.
+          © {new Date().getFullYear()} ParentSwap - Power By Yadata.com.au Pty Ltd. All rights reserved.
         </div>
       </div>
     </footer>

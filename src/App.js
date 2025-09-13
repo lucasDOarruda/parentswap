@@ -1,39 +1,38 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Landing from "./pages/Landing";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import BottomNav from "./components/BottomNav";
-import { useState } from "react";
+import Landing from "./pages/Landing";
 
-function AppShell() {
-  const [tab, setTab] = useState("home");
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <main className="max-w-md mx-auto px-4 py-4 pb-28">
-        {tab === "home" && <Home onNav={setTab} />}
-        {tab === "login" && <Login goHome={() => setTab("home")} />}
-        {tab === "requests" && <div className="pt-8 text-center">Requests</div>}
-        {tab === "post" && <div className="pt-8 text-center">Post</div>}
-        {tab === "wallet" && <div className="pt-8 text-center">Wallet</div>}
-        {tab === "me" && <div className="pt-8 text-center">Profile</div>}
-      </main>
-      {/* ✅ Only show BottomNav inside /app */}
-      <BottomNav tab={tab} setTab={setTab} />
-    </div>
-  );
-}
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    return unsub;
+  }, []);
 
-export default function App() {
-  const navigate = useNavigate();
+  if (loading) return <div>Loading...</div>;
 
   return (
     <Routes>
-      {/* ✅ Landing page gets SiteFooter */}
-      <Route path="/" element={<Landing goLogin={() => navigate("/app")} />} />
+      {/* 🌍 Public routes */}
+      <Route path="/" element={<Landing />} />
+      <Route path="/login" element={user ? <Navigate to="/home" /> : <Login />} />
 
-      {/* ✅ AppShell has NO SiteFooter */}
-      <Route path="/app/*" element={<AppShell />} />
+      {/* 🔒 Protected routes */}
+      <Route path="/home" element={user ? <Home /> : <Navigate to="/login" />} />
+
+      {/* 🌍 Catch-all → go to landing */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }
+
+export default App;
